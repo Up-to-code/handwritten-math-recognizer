@@ -87,6 +87,17 @@ def generate_digit_image(digit, style="clean"):
     return arr
 
 
+STYLE_LABELS = {
+    "clean": "careful",
+    "noisy": "smudged",
+    "thick": "heavy_marker",
+    "thin": "light_pen",
+    "rotated": "tilted",
+    "blurry": "out_of_focus",
+    "shifted": "off_center",
+}
+
+
 def generate_test_images(output_dir="data/test_images"):
     os.makedirs(output_dir, exist_ok=True)
     np.random.seed(28)
@@ -101,16 +112,18 @@ def generate_test_images(output_dir="data/test_images"):
     generated = []
     for digit, style in test_cases:
         img = generate_digit_image(digit, style)
-        filename = f"test_{digit}_{style}.png"
+        label = STYLE_LABELS[style]
+        filename = f"test_{digit}_{label}.png"
         filepath = os.path.join(output_dir, filename)
         cv2.imwrite(filepath, img)
         generated.append({
             "digit": digit,
             "style": style,
+            "label": label,
             "path": filepath,
             "filename": filename,
         })
-        print(f"Generated: {filename} (digit={digit}, style={style})")
+        print(f"Generated: {filename} (digit={digit}, writing={label})")
 
     preview = np.zeros((280 * 2 + 40, 280 * 2 + 40, 3), dtype=np.uint8)
     preview[:] = (40, 40, 40)
@@ -126,8 +139,8 @@ def generate_test_images(output_dir="data/test_images"):
 
         preview[y:y + 280, x:x + 280] = color_img
 
-        label = f"{g['digit']} ({g['style']})"
-        cv2.putText(preview, label, (x + 5, y + 25),
+        label = g["label"]
+        cv2.putText(preview, f"{g['digit']} ({label})", (x + 5, y + 25),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
 
     preview_path = os.path.join(output_dir, "preview.png")

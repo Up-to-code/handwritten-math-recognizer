@@ -77,10 +77,10 @@ def render_operator(op, target=28):
 
 
 def render_digit(d, target=28):
-    canvas_size = 96
+    canvas_size = 128
     img = Image.new("L", (canvas_size, canvas_size), 0)
     dr = ImageDraw.Draw(img)
-    fsize = random.randint(62, 86)
+    fsize = random.randint(96, 126)
     font = ImageFont.truetype(FONT_PATH, fsize)
     bbox = dr.textbbox((0, 0), str(d), font=font)
     tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
@@ -104,6 +104,9 @@ def render_digit(d, target=28):
     h, w = crop.shape
     pad = int(max(w, h) * 0.25)
     crop = np.pad(crop, ((pad, pad), (pad, pad)), mode="constant", constant_values=0)
+    if random.random() < 0.5:
+        k = random.choice([2, 3, 4])
+        crop = cv2.dilate(crop, np.ones((k, k), np.uint8), iterations=1)
     scale = random.uniform(0.85, 1.15)
     crop = cv2.resize(crop, (max(2, int(target * scale)), max(2, int(target * scale))),
                       interpolation=cv2.INTER_AREA)

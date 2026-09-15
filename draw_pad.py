@@ -128,22 +128,28 @@ class DrawPad:
         x_top, x_bot = ys.min(), ys.max()
         height = x_bot - x_top + 1
 
-        xs = np.nonzero(mask.sum(axis=0))[0]
-        if len(xs) == 0:
+        col = mask[x_top:x_bot + 1, :].sum(axis=0).astype(np.float32)
+        inks = np.nonzero(col)[0]
+        if len(inks) == 0:
             return []
 
+        merge_gap = max(6, int(height * 0.08))
         zones = []
-        start = xs[0]
-        prev = xs[0]
-        for v in xs[1:]:
-            if v - prev > max(6, int(height * 0.08)):
+        start = inks[0]
+        prev = inks[0]
+        for v in inks[1:]:
+            if v - prev > merge_gap:
                 zones.append((start, prev))
                 start = v
             prev = v
         zones.append((start, prev))
 
+        final = []
+        for z in zones:
+            final.extend(self._split_wide_zone(col, z, height))
+
         rois = []
-        for (z0, z1) in zones:
+        for (z0, z1) in final:
             w = z1 - z0 + 1
             if w < 8:
                 continue
@@ -151,11 +157,47 @@ class DrawPad:
             rois.append({"roi": roi, "bbox": (z0, x_top, w, height)})
         return rois
 
+    def _split_wide_zone(self, col, zone, height, depth=0):
+        z0, z1 = zone
+        w = z1 - z0 + 1
+        if depth > 4 or w / height <= 1.25 or w < 24:
+            return [zone]
+
+        bridge_max = max(4, int(height * 0.10))
+        min_piece = max(6, int(height * 0.22))
+
+        best = None
+        i = z0
+        while i <= z1:
+            if col[i] <= 255.0:
+                j = i
+                while j <= z1 and col[j] <= 255.0:
+                    j += 1
+                run = j - i
+                left = (i - 1) - z0 + 1
+                right = z1 - j + 1
+                if run <= bridge_max and left >= min_piece and right >= min_piece:
+                    vmin = float(col[i:j].min())
+                    if best is None or vmin < best[0]:
+                        best = (vmin, i, j)
+                i = j
+            else:
+                i += 1
+
+        if best is None:
+            return [zone]
+        _, i, j = best
+        left_zone = (z0, i - 1)
+        right_zone = (j, z1)
+        return (self._split_wide_zone(col, left_zone, height, depth + 1) +
+                self._split_wide_zone(col, right_zone, height, depth + 1))
+
     def normalize_digit(self, roi):
         h, w = roi.shape
         pad = max(w, h) // 4
         roi = cv2.copyMakeBorder(roi, pad, pad, pad, pad, cv2.BORDER_CONSTANT, value=0)
-        roi = cv2.resize(roi, (28, 28))
+        interp = cv2.INTER_AREA if max(roi.shape) > 60 else cv2.INTER_LINEAR
+        roi = cv2.resize(roi, (28, 28), interpolation=interp)
         tensor = torch.FloatTensor(roi).unsqueeze(0) / 255.0
         return (tensor - 0.1307) / 0.3081
 

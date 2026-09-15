@@ -8,6 +8,7 @@ A Python ML application that detects faces in real-time, recognizes handwritten 
 - **Number Recognition**: CNN trained on MNIST + hand-written-style font rendering to recognize digits (0-9) and `+` / `-` operators
 - **Math Pad**: Draw whole expressions like `12+5` or `60938`; the pad segments digits, reads them, and shows the result
 - **Big Numbers**: Handles ones up through thousands and beyond, with robustness on confusing digits (0/6, 9/3, 8/3)
+- **Connected-Digit Splitting**: Touching or cramped digits are divided automatically (column-gap + valley detection) instead of reading as one blob
 - **Student Profiles**: Creates and manages student profiles with answer history
 - **Grading System**: Automatic grading (A-F) based on correct answer percentage
 - **Drawing Pad**: On-screen drawing canvas for number input
@@ -45,6 +46,7 @@ python draw_pad.py
 ```
 
 Draw with the mouse. Digits are split by column gaps, so keep a small gap between symbols.
+Touching digits are still split automatically when a hairline seam remains.
 
 - `c` clear canvas
 - `Enter` confirm prediction

@@ -244,7 +244,7 @@ class SmartClassroom:
 
                 parts = f.replace(".png", "").split("_")
                 actual = int(parts[1])
-                style = parts[2]
+                style = "_".join(parts[2:])
 
                 predicted, confidence = self.predict_digit(img)
                 is_correct = predicted == actual
