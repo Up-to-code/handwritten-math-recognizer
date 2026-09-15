@@ -1,6 +1,6 @@
-# Smart Classroom - Face & Number Detection
+# Handwritten Math Recognizer (Classroom Edition)
 
-A Python ML application that detects faces in real-time, recognizes handwritten numbers and math, and tracks student performance through profiles and grading.
+A Python ML classroom app that reads handwritten digits, `+` and `-` expressions, and big numbers from a drawing pad, and tracks student performance through face-recognized profiles and grading.
 
 ## Features
 
