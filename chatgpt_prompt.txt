@@ -1,0 +1,26 @@
+You are generating a dataset of classroom photos for training/testing a face-detection
+and hand-written-digit-recognition app. Generate 40 photorealistic images, one per
+request, following these rules.
+
+PROMPT TEMPLATE (copy-paste, change the variables each time):
+
+    A photorealistic close-up classroom photo. One elementary-school child (age 6-8),
+    smiling, facing the camera directly, shoulders and head fully visible, chest up.
+    The child is holding a white card (US letter size) at chest level in front of them,
+    facing the camera. On the card is a single boldly hand-written number using a felt
+    pen. The number must be [INSERT 0 TO 9 below], drawn large, dark and centered so it
+    is clearly legible. Soft, even indoor classroom lighting, plain neutral classroom
+    background (wall or whiteboard), no other children in frame, no text anywhere else,
+    no hands over the number. Natural skin tones, realistic proportions, 3:4 aspect.
+
+RULES:
+- Only one child per image.
+- The number on the card must fill at least 40% of the card area.
+- Vary the child (different gender and ethnicity) across the set.
+- Cover each digit 0,1,2,3,4,5,6,7,8,9 at least 4 times.
+- After you generate each image, reply ONLY with a JSON line:
+  {"file": "child_<digit>_<n>.png", "digit": <digit>, "kid": "<short description>"}
+  so the images can be saved and labelled automatically.
+
+Use case: these images are shown to a camera-based quiz app that detects the child face,
+reads the hand-written number, and compares it to the correct answer to give a score.

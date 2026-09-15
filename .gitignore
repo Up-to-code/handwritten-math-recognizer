@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.DS_Store
+*.log
+
+# Trained models - run `python retrain_robust.py` to regenerate
+models/
+
+# Data - MNIST downloads / test images (large)
+data/
+
+# Runtime artifacts
+stats.json
+profiles/
