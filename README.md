@@ -96,3 +96,7 @@ smart-classroom/
 ├── data/                    # MNIST + test data (gitignored)
 └── profiles/                # Student profile JSONs
 ```
+
+## Project links
+
+[Source](https://github.com/Up-to-code/handwritten-math-recognizer) · [Issues](https://github.com/Up-to-code/handwritten-math-recognizer/issues) · [Public project directory](https://github.com/qentrah/.github/blob/main/profile/PROJECTS.md)
